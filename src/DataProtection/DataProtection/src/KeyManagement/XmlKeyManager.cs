@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -29,6 +30,7 @@ namespace Microsoft.AspNetCore.DataProtection.KeyManagement
     /// <summary>
     /// A key manager backed by an <see cref="IXmlRepository"/>.
     /// </summary>
+    [SupportedOSPlatform("windows")]
     public sealed class XmlKeyManager : IKeyManager, IInternalXmlKeyManager
     {
         // Used for serializing elements to persistent storage

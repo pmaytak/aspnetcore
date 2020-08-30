@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.Versioning;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.Server.IISIntegration
 {
+    [SupportedOSPlatform("windows")]
     public class IISMiddleware
     {
         private const string MSAspNetCoreClientCert = "MS-ASPNETCORE-CLIENTCERT";

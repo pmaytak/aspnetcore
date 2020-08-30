@@ -317,7 +317,9 @@ namespace Microsoft.AspNetCore.Authentication.Negotiate
             ClaimsPrincipal user;
             if (identity is WindowsIdentity winIdentity)
             {
+#pragma warning disable CA1416 // Validate platform compatibility
                 user = new WindowsPrincipal(winIdentity);
+#pragma warning restore CA1416 // Validate platform compatibility
                 Response.RegisterForDispose(winIdentity);
             }
             else
