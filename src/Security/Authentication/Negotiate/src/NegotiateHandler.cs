@@ -315,11 +315,9 @@ namespace Microsoft.AspNetCore.Authentication.Negotiate
             // things like ClaimsTransformation run per request.
             var identity = _negotiateState.GetIdentity();
             ClaimsPrincipal user;
-            if (identity is WindowsIdentity winIdentity)
+            if (OperatingSystem.IsWindows() && identity is WindowsIdentity winIdentity)
             {
-#pragma warning disable CA1416 // Validate platform compatibility
                 user = new WindowsPrincipal(winIdentity);
-#pragma warning restore CA1416 // Validate platform compatibility
                 Response.RegisterForDispose(winIdentity);
             }
             else
