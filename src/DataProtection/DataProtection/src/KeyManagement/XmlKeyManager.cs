@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -23,14 +23,12 @@ using Microsoft.AspNetCore.DataProtection.XmlEncryption;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Microsoft.Win32;
 
 namespace Microsoft.AspNetCore.DataProtection.KeyManagement
 {
     /// <summary>
     /// A key manager backed by an <see cref="IXmlRepository"/>.
     /// </summary>
-    [SupportedOSPlatform("windows")]
     public sealed class XmlKeyManager : IKeyManager, IInternalXmlKeyManager
     {
         // Used for serializing elements to persistent storage
@@ -502,6 +500,8 @@ namespace Microsoft.AspNetCore.DataProtection.KeyManagement
                 {
                     if (OSVersionUtil.IsWindows())
                     {
+                        Debug.Assert(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
+
                         // If the user profile is available, we can protect using DPAPI.
                         // Probe to see if protecting to local user is available, and use it as the default if so.
                         encryptor = new DpapiXmlEncryptor(
@@ -522,13 +522,11 @@ namespace Microsoft.AspNetCore.DataProtection.KeyManagement
                 else
                 {
                     // Use profile isn't available - can we use the HKLM registry?
-                    RegistryKey regKeyStorageKey = null;
                     if (OSVersionUtil.IsWindows())
                     {
-                        regKeyStorageKey = RegistryXmlRepository.DefaultRegistryKey;
-                    }
-                    if (regKeyStorageKey != null)
-                    {
+                        Debug.Assert(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
+                        var regKeyStorageKey = RegistryXmlRepository.DefaultRegistryKey;
+
                         // If the user profile isn't available, we can protect using DPAPI (to machine).
                         encryptor = new DpapiXmlEncryptor(protectToLocalMachine: true, loggerFactory: _loggerFactory);
                         repository = new RegistryXmlRepository(regKeyStorageKey, _loggerFactory);
