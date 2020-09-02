@@ -851,6 +851,9 @@ namespace Microsoft.AspNetCore.Razor.Design.IntegrationTests
 
             Assert.FileExists(result, publishOutputDirectory, "wwwroot", "_framework", "dotnet.wasm");
             Assert.FileDoesNotExist(result, publishOutputDirectory, "wwwroot", "_framework", "icudt.dat");
+            Assert.FileDoesNotExist(result, publishOutputDirectory, "wwwroot", "_framework", "icudt_CJK.dat");
+            Assert.FileDoesNotExist(result, publishOutputDirectory, "wwwroot", "_framework", "icudt_EFIGS.dat");
+            Assert.FileDoesNotExist(result, publishOutputDirectory, "wwwroot", "_framework", "icudt_no_CJK.dat");
         }
 
         private static void AddWasmProjectContent(ProjectDirectory project, string content)

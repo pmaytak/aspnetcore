@@ -58,9 +58,6 @@ namespace BasicTestApp
 
         private static void ConfigureCulture(WebAssemblyHost host)
         {
-            // In the absence of a specified value, we want the culture to be en-US so that the tests for bind can work consistently.
-            var culture = new CultureInfo("en-US");
-
             Uri uri = null;
             try
             {
@@ -70,6 +67,17 @@ namespace BasicTestApp
             {
                 // Some of our tests set this application up incorrectly so that querying NavigationManager.Uri throws.
             }
+
+            var query = HttpUtility.ParseQueryString(uri.Query);
+
+            if (query["do-not-set-culture"] != null)
+            {
+                Console.WriteLine("Did not set culture.");
+                return;
+            }
+
+            // In the absence of a specified value, we want the culture to be en-US so that the tests for bind can work consistently.
+            var culture = new CultureInfo("en-US");
 
             if (uri != null && HttpUtility.ParseQueryString(uri.Query)["culture"] is string cultureName)
             {

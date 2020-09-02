@@ -31,43 +31,48 @@ namespace Microsoft.AspNetCore.Components.E2ETests.Tests
             var cultureInfo = CultureInfo.GetCultureInfo(culture);
             SetCulture(culture);
 
+            AssertCanSetCultureAndParseCultureSensitiveNumbersAndDates(Browser, cultureInfo);
+        }
+
+        protected static void AssertCanSetCultureAndParseCultureSensitiveNumbersAndDates(IWebDriver browser, CultureInfo cultureInfo)
+        {
             // int
-            var input = Browser.FindElement(By.Id("input_type_text_int"));
-            var display = Browser.FindElement(By.Id("input_type_text_int_value"));
-            Browser.Equal(42.ToString(cultureInfo), () => display.Text);
+            var input = browser.FindElement(By.Id("input_type_text_int"));
+            var display = browser.FindElement(By.Id("input_type_text_int_value"));
+            browser.Equal(42.ToString(cultureInfo), () => display.Text);
 
             input.Clear();
             input.SendKeys(9000.ToString("0,000", cultureInfo));
             input.SendKeys("\t");
-            Browser.Equal(9000.ToString(cultureInfo), () => display.Text);
+            browser.Equal(9000.ToString(cultureInfo), () => display.Text);
 
             // decimal
-            input = Browser.FindElement(By.Id("input_type_text_decimal"));
-            display = Browser.FindElement(By.Id("input_type_text_decimal_value"));
-            Browser.Equal(4.2m.ToString(cultureInfo), () => display.Text);
+            input = browser.FindElement(By.Id("input_type_text_decimal"));
+            display = browser.FindElement(By.Id("input_type_text_decimal_value"));
+            browser.Equal(4.2m.ToString(cultureInfo), () => display.Text);
 
             input.Clear();
             input.SendKeys(9000.42m.ToString("0,000.00", cultureInfo));
             input.SendKeys("\t");
-            Browser.Equal(9000.42m.ToString(cultureInfo), () => display.Text);
+            browser.Equal(9000.42m.ToString(cultureInfo), () => display.Text);
 
             // datetime
-            input = Browser.FindElement(By.Id("input_type_text_datetime"));
-            display = Browser.FindElement(By.Id("input_type_text_datetime_value"));
-            Browser.Equal(new DateTime(1985, 3, 4).ToString(cultureInfo), () => display.Text);
+            input = browser.FindElement(By.Id("input_type_text_datetime"));
+            display = browser.FindElement(By.Id("input_type_text_datetime_value"));
+            browser.Equal(new DateTime(1985, 3, 4).ToString(cultureInfo), () => display.Text);
 
             input.ReplaceText(new DateTime(2000, 1, 2).ToString(cultureInfo));
             input.SendKeys("\t");
-            Browser.Equal(new DateTime(2000, 1, 2).ToString(cultureInfo), () => display.Text);
+            browser.Equal(new DateTime(2000, 1, 2).ToString(cultureInfo), () => display.Text);
 
             // datetimeoffset
-            input = Browser.FindElement(By.Id("input_type_text_datetimeoffset"));
-            display = Browser.FindElement(By.Id("input_type_text_datetimeoffset_value"));
-            Browser.Equal(new DateTimeOffset(new DateTime(1985, 3, 4)).ToString(cultureInfo), () => display.Text);
+            input = browser.FindElement(By.Id("input_type_text_datetimeoffset"));
+            display = browser.FindElement(By.Id("input_type_text_datetimeoffset_value"));
+            browser.Equal(new DateTimeOffset(new DateTime(1985, 3, 4)).ToString(cultureInfo), () => display.Text);
 
             input.ReplaceText(new DateTimeOffset(new DateTime(2000, 1, 2)).ToString(cultureInfo));
             input.SendKeys("\t");
-            Browser.Equal(new DateTimeOffset(new DateTime(2000, 1, 2)).ToString(cultureInfo), () => display.Text);
+            browser.Equal(new DateTimeOffset(new DateTime(2000, 1, 2)).ToString(cultureInfo), () => display.Text);
         }
 
         // The logic is different for verifying culture-invariant fields. The problem is that the logic for what
