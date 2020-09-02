@@ -1,9 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Globalization;
-using System.Threading.Tasks;
-using AutoMapper;
+using System;
 using BasicTestApp;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
 using Microsoft.AspNetCore.Components.E2ETests.Tests;
@@ -36,33 +34,6 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 
             var cultureDisplay = Browser.Exists(By.Id("culture-name-display"));
             Assert.Equal($"Culture is: {culture}", cultureDisplay.Text);
-        }
-
-        [Fact]
-        public async Task GloblizationUsesNavigatorDefaultLanguage()
-        {
-            var context = "ko";
-            var (browser, logs) = await BrowserFixture.CreateBrowserAsync(context, Output, chromeOptions =>
-            {
-                chromeOptions.AddUserProfilePreference("intl.accept_languages", "ko");
-            });
-
-            try
-            {
-                // Do not explicity specify a culture. Rely on the browser language.
-                browser.Navigate(_serverFixture.RootUri, $"{ServerPathBase}/?do-not-set-culture=true", noReload: false);
-                browser.MountTestComponent<GlobalizationBindCases>();
-                browser.Exists(By.Id("globalization-cases"));
-                var cultureDisplay = browser.Exists(By.Id("culture-name-display"));
-                Browser.Equal("Culture is: ko", () => cultureDisplay.Text);
-
-                AssertCanSetCultureAndParseCultureSensitiveNumbersAndDates(browser, new CultureInfo("ko"));
-            }
-            finally
-            {
-                browser.Dispose();
-                await BrowserFixture.DeleteBrowserUserProfileAsync(context);
-            }
         }
     }
 }

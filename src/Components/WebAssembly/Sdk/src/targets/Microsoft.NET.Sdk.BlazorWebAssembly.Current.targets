@@ -466,7 +466,7 @@ Copyright (c) .NET Foundation. All rights reserved.
       <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
         Condition="'$(BlazorEnableTimeZoneSupport)' == 'false' AND '%(ResolvedFileToPublish.FileName)%(ResolvedFileToPublish.Extension)' == 'dotnet.timezones.blat'" />
 
-      <ResolvedFileToPublish Remove="@(ReferenceCopyLocalPaths)"
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
         Condition="'$(InvariantGlobalization)' == 'true' AND '%(ResolvedFileToPublish.Extension)' == '.dat' AND $([System.String]::Copy('%(ResolvedFileToPublish.FileName)').StartsWith('icudt'))" />
 
       <!-- Remove dotnet.js from publish output -->

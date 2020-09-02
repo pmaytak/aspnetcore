@@ -16,7 +16,7 @@ export interface WebAssemblyStartOptions {
   environment?: string;
 
   /**
-   * Gets the application culture. This is a name specified in the BCp 47 format. See https://tools.ietf.org/html/bcp47
+   * Gets the application culture. This is a name specified in the BCP 47 format. See https://tools.ietf.org/html/bcp47
    */
   applicationCulture?: string;
 }

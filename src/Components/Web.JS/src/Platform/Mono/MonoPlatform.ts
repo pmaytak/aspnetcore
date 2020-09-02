@@ -345,7 +345,7 @@ function createEmscriptenModuleInstance(resourceLoader: WebAssemblyResourceLoade
             return resourcesToLoad.length;
           }));
       }
-      return BINDING.js_to_mono_obj(0);
+      return BINDING.js_to_mono_obj(Promise.resolve(0));
     }
 
     window['Blazor']._internal.getLazyAssemblies = (assembliesToLoadDotNetArray: System_Array<System_String>): System_Object => {

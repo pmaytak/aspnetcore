@@ -77,34 +77,29 @@ namespace Microsoft.AspNetCore.E2ETesting
         {
             foreach (var context in _browsers.Keys)
             {
-                await DeleteBrowserUserProfileAsync(context);
-            }
-        }
-
-        public static async Task DeleteBrowserUserProfileAsync(string context)
-        {
-            var userProfileDirectory = UserProfileDirectory(context);
-            if (!string.IsNullOrEmpty(userProfileDirectory) && Directory.Exists(userProfileDirectory))
-            {
-                var attemptCount = 0;
-                while (true)
+                var userProfileDirectory = UserProfileDirectory(context);
+                if (!string.IsNullOrEmpty(userProfileDirectory) && Directory.Exists(userProfileDirectory))
                 {
-                    try
+                    var attemptCount = 0;
+                    while (true)
                     {
-                        Directory.Delete(userProfileDirectory, recursive: true);
-                        break;
-                    }
-                    catch (UnauthorizedAccessException ex)
-                    {
-                        attemptCount++;
-                        if (attemptCount < 5)
+                        try
                         {
-                            Console.WriteLine($"Failed to delete browser profile directory '{userProfileDirectory}': '{ex}'. Will retry.");
-                            await Task.Delay(2000);
+                            Directory.Delete(userProfileDirectory, recursive: true);
+                            break;
                         }
-                        else
+                        catch (UnauthorizedAccessException ex)
                         {
-                            throw;
+                            attemptCount++;
+                            if (attemptCount < 5)
+                            {
+                                Console.WriteLine($"Failed to delete browser profile directory '{userProfileDirectory}': '{ex}'. Will retry.");
+                                await Task.Delay(2000);
+                            }
+                            else
+                            {
+                                throw;
+                            }
                         }
                     }
                 }
@@ -126,7 +121,7 @@ namespace Microsoft.AspNetCore.E2ETesting
                     return Task.FromResult<(IWebDriver, ILogs)>(default);
                 }
 
-                createBrowserFunc = (key, output) => CreateBrowserAsync(key, output, configureChrome: null);
+                createBrowserFunc = CreateBrowserAsync;
             }
 
 
@@ -135,7 +130,7 @@ namespace Microsoft.AspNetCore.E2ETesting
 
         public Task InitializeAsync() => Task.CompletedTask;
 
-        public async Task<(IWebDriver browser, ILogs log)> CreateBrowserAsync(string context, ITestOutputHelper output, Action<ChromeOptions> configureChrome = null)
+        private async Task<(IWebDriver browser, ILogs log)> CreateBrowserAsync(string context, ITestOutputHelper output)
         {
             var opts = new ChromeOptions();
 
@@ -146,15 +141,6 @@ namespace Microsoft.AspNetCore.E2ETesting
             }
 
             opts.AddArgument("--no-sandbox");
-
-            if (configureChrome == null)
-            {
-                opts.AddUserProfilePreference("intl.accept_languages", "en-US");
-            }
-            else
-            {
-                configureChrome(opts);
-            }
 
             // Log errors
             opts.SetLoggingPreference(LogType.Browser, LogLevel.All);
@@ -217,7 +203,7 @@ namespace Microsoft.AspNetCore.E2ETesting
             throw new InvalidOperationException("Couldn't create a Selenium remote driver client. The server is irresponsive", innerException);
         }
 
-        private static string UserProfileDirectory(string context)
+        private string UserProfileDirectory(string context)
         {
             if (string.IsNullOrEmpty(context))
             {
