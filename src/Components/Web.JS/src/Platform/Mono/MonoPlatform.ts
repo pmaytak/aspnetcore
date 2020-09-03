@@ -250,10 +250,9 @@ function createEmscriptenModuleInstance(resourceLoader: WebAssemblyResourceLoade
   }
 
   let icuDataResource: LoadingResource | undefined;
-  let icuDataResourceName: string | undefined;
   if (resourceLoader.bootConfig.icuDataMode != ICUDataMode.Invariant) {
     const applicationCulture = resourceLoader.startOptions.applicationCulture || (navigator.languages && navigator.languages[0]);
-    icuDataResourceName = getICUResourceName(resourceLoader.bootConfig, applicationCulture);
+    const icuDataResourceName = getICUResourceName(resourceLoader.bootConfig, applicationCulture);
     icuDataResource = resourceLoader.loadResource(
       icuDataResourceName,
       `_framework/${icuDataResourceName}`,
@@ -290,7 +289,7 @@ function createEmscriptenModuleInstance(resourceLoader: WebAssemblyResourceLoade
       loadICUData(icuDataResource);
     } else {
       // Use invariant culture if the app does not carry icu data.
-      MONO.mono_wasm_setenv("DOTNET_SYSTEM_GLOBALIZATION_INVARIANT", "1");
+      MONO.mono_wasm_setenv('DOTNET_SYSTEM_GLOBALIZATION_INVARIANT', '1');
     }
 
     // Fetch the assemblies and PDBs in the background, telling Mono to wait until they are loaded
@@ -308,18 +307,15 @@ function createEmscriptenModuleInstance(resourceLoader: WebAssemblyResourceLoade
     window['Blazor']._internal.getSatelliteAssemblies = (culturesToLoadDotNetArray: System_Array<System_String>): System_Object => {
       const culturesToLoad = BINDING.mono_array_to_js_array<System_String, string>(culturesToLoadDotNetArray);
       const satelliteResources = resourceLoader.bootConfig.resources.satelliteResources;
+      const applicationCulture = resourceLoader.startOptions.applicationCulture || (navigator.languages && navigator.languages[0]);
 
-      if (culturesToLoad && resourceLoader.bootConfig.icuDataMode == ICUDataMode.Default) {
-        const cultureToLoad = culturesToLoad[0].split('-')[0];
-        const dotNetCultureICUResourceName = getICUResourceName(resourceLoader.bootConfig, cultureToLoad);
-        if (dotNetCultureICUResourceName != icuDataResourceName) {
-          // We load an initial icu file based on the browser's locale. However if the application's culture requires a different set, flag this as an error.
-          if (resourceLoader.bootConfig.debugBuild) {
-            throw new Error('The application\'s culture settings requires loading a combined globalization data files. ' +
-            'To prevent this error, set BlazorWebAssemblyLoadAllGlobalizationData=true in the application\'s project file or specify the application culture using start options.');
-          } else {
-            throw new Error('Globalization data files required to correctly execute this application are missing.');
-          }
+      if (resourceLoader.bootConfig.icuDataMode == ICUDataMode.Default && culturesToLoad && culturesToLoad[0] !== applicationCulture) {
+        // We load an initial icu file based on the browser's locale. However if the application's culture requires a different set, flag this as an error.
+        if (resourceLoader.bootConfig.debugBuild) {
+          throw new Error('This application\'s globalization settings requires using the combined globalization data file. ' +
+          'To configure your application to use this data file, set <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData> in the application\'s project file. ');
+        } else {
+          throw new Error('Globalization data files required to correctly execute this application are missing.');
         }
       }
 

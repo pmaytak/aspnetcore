@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Components.E2ETests.Tests
 {
-    public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixture<Program>>
+    public class VirtualizationTest : E2ETest.Infrastructure.ServerTestBase<ToggleExecutionModeServerFixture<Program>>
     {
         public VirtualizationTest(
             BrowserFixture browserFixture,
