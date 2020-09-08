@@ -62,7 +62,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly
         // Internal for tests
         public void WriteBootJson(Stream output, string entryAssemblyName)
         {
-            var icuDataMode = ICUDataMode.Default;
+            var icuDataMode = ICUDataMode.Sharded;
 
             if (string.Equals(InvariantGlobalization, "true", StringComparison.OrdinalIgnoreCase))
             {

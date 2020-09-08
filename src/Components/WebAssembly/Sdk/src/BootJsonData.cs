@@ -92,7 +92,7 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly
         /// <summary>
         /// Load optimized icu data file based on the user's locale
         /// </summary>
-        Default,
+        Sharded,
 
         /// <summary>
         /// Use the combined icudt.dat file

@@ -40,7 +40,7 @@ export interface ResourceGroups {
 export type ResourceList = { [name: string]: string };
 
 export enum ICUDataMode {
-  Default,
+  Sharded,
   All,
   Invariant
 }

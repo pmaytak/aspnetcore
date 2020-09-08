@@ -309,14 +309,9 @@ function createEmscriptenModuleInstance(resourceLoader: WebAssemblyResourceLoade
       const satelliteResources = resourceLoader.bootConfig.resources.satelliteResources;
       const applicationCulture = resourceLoader.startOptions.applicationCulture || (navigator.languages && navigator.languages[0]);
 
-      if (resourceLoader.bootConfig.icuDataMode == ICUDataMode.Default && culturesToLoad && culturesToLoad[0] !== applicationCulture) {
+      if (resourceLoader.bootConfig.icuDataMode == ICUDataMode.Sharded && culturesToLoad && culturesToLoad[0] !== applicationCulture) {
         // We load an initial icu file based on the browser's locale. However if the application's culture requires a different set, flag this as an error.
-        if (resourceLoader.bootConfig.debugBuild) {
-          throw new Error('This application\'s globalization settings requires using the combined globalization data file. ' +
-          'To configure your application to use this data file, set <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData> in the application\'s project file. ');
-        } else {
-          throw new Error('Globalization data files required to correctly execute this application are missing.');
-        }
+        throw new Error('To change culture dynamically during startup, set <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData> in the application\'s project file.');
       }
 
       if (satelliteResources) {
