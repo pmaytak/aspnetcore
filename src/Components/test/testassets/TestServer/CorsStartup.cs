@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ namespace TestServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddMvc();
             services.AddCors(options =>
             {
@@ -37,6 +39,10 @@ namespace TestServer
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var enUs = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentCulture = enUs;
+            CultureInfo.DefaultThreadCurrentUICulture = enUs;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -50,10 +56,11 @@ namespace TestServer
 
                 app.UseRouting();
 
-                app.UseCors();
+                app.UseCors("AllowAll");
 
                 app.UseEndpoints(endpoints =>
                 {
+                    endpoints.MapHub<ChatHub>("/chathub");
                     endpoints.MapControllers();
                     endpoints.MapFallbackToFile("index.html");
                 });
